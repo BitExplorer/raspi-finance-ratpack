@@ -4,20 +4,17 @@ import finance.domain.Category
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import org.jooq.DSLContext
-import org.jooq.Result
 import org.jooq.SQLDialect
-import org.jooq.generated.tables.records.TCategoryRecord
 import org.jooq.impl.DSL
 import ratpack.exec.Blocking
 import ratpack.exec.Operation
-
-
 import com.google.inject.Inject
 import javax.sql.DataSource
 
 import static org.jooq.generated.Tables.T_CATEGORY
 
 @Log
+@CompileStatic
 class CategoryRepository {
     private final DSLContext dslContext
 
@@ -30,12 +27,11 @@ class CategoryRepository {
         return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() });
     }
 
-    Category selectAllCategories() {
-        Result<TCategoryRecord> categories =
-                dslContext.selectFrom(T_CATEGORY)
-                        .fetch()
+    List<Category> selectAllCategories() {
+        List<Category> categories = dslContext.selectFrom(T_CATEGORY).fetchInto(Category.class)
         log.info categories.toString()
-        return new Category()
+
+        return categories
     }
 
 }

@@ -1,7 +1,7 @@
 {
-  "serverName": "localhost",
+  "serverName": "192.168.100.124",
   "user": "henninb",
   "password": "monday1",
-  "databaseName": "finance_test_db",
+  "databaseName": "finance_db",
   "portNumber": 5432
 }

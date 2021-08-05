@@ -1,5 +1,6 @@
 package finance.services
 
+import finance.domain.Category
 import finance.repositories.CategoryRepository
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
@@ -17,8 +18,7 @@ class CategoryService implements Service {
         this.categoryRepository = categoryRepository
     }
 
-    void selectAllCategories() {
-        categoryRepository.selectAllCategories()
-        log.info "selected all categories"
+    List<Category> selectAllCategories() {
+        return categoryRepository.selectAllCategories()
     }
 }

@@ -1,12 +1,12 @@
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.zaxxer.hikari.HikariConfig
+import finance.domain.Category
 import finance.services.CategoryService
 
-//import org.grails.orm.hibernate.HibernateDatastore
 import postgres.PostgresConfig
 import postgres.PostgresModule
 import ratpack.config.ConfigData
 import ratpack.config.ConfigDataBuilder
-import ratpack.groovy.template.MarkupTemplateModule
 import ratpack.handling.Context
 import ratpack.hikari.HikariModule
 
@@ -45,8 +45,10 @@ ratpack {
         get {
             Context context, CategoryService categoryService ->
                 context.request.getBody().then { typed ->
-                    categoryService.selectAllCategories()
-                    render('see logs for details')
+                    List<Category> categories = categoryService.selectAllCategories()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(categories)
+                    render(json)
                 }
         }
 
