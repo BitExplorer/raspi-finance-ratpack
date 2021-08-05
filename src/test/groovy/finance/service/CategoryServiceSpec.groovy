@@ -1,21 +1,22 @@
-package example.service
+package finance.service
 
+import finance.repositories.CategoryRepository
 import finance.services.CategoryService
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class CategoryServiceSpec extends  Specification {
-    CategoryService categoryService = new CategoryService()
+    CategoryRepository categoryRepositoryMock = Mock(CategoryRepository)
+    CategoryService categoryService = new CategoryService(categoryRepositoryMock)
 
-    void 'test add two numbers' () {
-        given:
-        int x = 5
-        int y = 4
-        int expectedResult = 9
-
+    @Ignore
+    void 'select all categories' () {
         when:
-        int actualResult = categoryService.addNumbers(x,y)
+        categoryService.selectAllCategories()
 
         then:
-        actualResult == expectedResult
+        //actualResult == expectedResult
+        0 * _
+
     }
 }
