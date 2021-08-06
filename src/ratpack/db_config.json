@@ -1,7 +1,7 @@
 {
-  "serverName": "192.168.100.124",
-  "user": "henninb",
-  "password": "monday1",
-  "databaseName": "finance_db",
-  "portNumber": 5432
+  "database": {
+    "username": "henninb",
+    "password": "monday1",
+    "jdbcUrl": "jdbc:postgresql://192.168.100.124:5432/finance_db"
+  }
 }

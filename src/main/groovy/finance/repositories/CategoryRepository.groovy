@@ -28,10 +28,7 @@ class CategoryRepository {
     }
 
     List<Category> selectAllCategories() {
-        List<Category> categories = dslContext.selectFrom(T_CATEGORY).fetchInto(Category.class)
-        log.info categories.toString()
-
-        return categories
+        return dslContext.selectFrom(T_CATEGORY).fetchInto(Category.class)
     }
 
 }
