@@ -1,7 +1,11 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.zaxxer.hikari.HikariConfig
+import finance.domain.Account
 import finance.domain.Category
+import finance.domain.Description
+import finance.services.AccountService
 import finance.services.CategoryService
+import finance.services.DescriptionService
 
 //import postgres.PostgresConfig
 //import postgres.PostgresModule
@@ -30,6 +34,8 @@ ratpack {
         moduleConfig(HikariModule, new HikariConfig(hikariConfigProperties))
 
         bind(CategoryService)
+        bind(DescriptionService)
+        bind(AccountService)
     }
 
     handlers {
@@ -37,17 +43,36 @@ ratpack {
 //            render toJson(config)
 //        }
 
-        get {
+        get ('accounts') {
+            Context context, AccountService accountService ->
+                context.request.getBody().then { typed ->
+                    List<Account> accounts = accountService.selectAllAccounts()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(accounts)
+                    render(json)
+                }
+        }
+
+        get ('categories') {
             Context context, CategoryService categoryService ->
                 context.request.getBody().then { typed ->
                     List<Category> categories = categoryService.selectAllCategories()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(categories)
-                    println serverConfig.getBaseDir()
                     render(json)
                 }
         }
 
-        files { dir 'public' }
+        get ('descriptions') {
+            Context context, DescriptionService descriptionService ->
+                context.request.getBody().then { typed ->
+                    List<Description> descriptions = descriptionService.selectAllDescriptions()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(descriptions)
+                    render(json)
+                }
+        }
+
+        //files { dir 'public' }
     }
 }

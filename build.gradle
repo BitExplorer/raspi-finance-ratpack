@@ -80,8 +80,8 @@ jooq {
                        database {
                             name = 'org.jooq.meta.postgres.PostgresDatabase'
                             inputSchema = 'public'
-                            includes = 't_category'
-                            excludes = ''
+                            //includes = 't_category, t_description'
+                            //excludes = ''
                        }
                        generate {
                            deprecated = false

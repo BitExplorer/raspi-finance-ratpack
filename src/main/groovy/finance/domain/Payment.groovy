@@ -1,11 +1,16 @@
 package finance.domain
 
+import groovy.transform.ToString
+
 import java.sql.Date
 
+@ToString
 class Payment {
-    String accountNameOwner = 'foo_brian'
-    BigDecimal amount = 0.00G
-    Date transactionDate = new Date(1605300155000)
-    String guidSource = UUID.randomUUID()
-    String guidDestination = UUID.randomUUID()
+    Long paymentId
+    String accountNameOwner
+    BigDecimal amount
+    Date transactionDate
+    String guidSource
+    String guidDestination
+    Boolean activeStatus
 }

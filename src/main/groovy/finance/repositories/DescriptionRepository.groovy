@@ -1,6 +1,8 @@
 package finance.repositories
 
+import com.google.inject.Inject
 import finance.domain.Category
+import finance.domain.Description
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import org.jooq.DSLContext
@@ -8,31 +10,25 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import ratpack.exec.Blocking
 import ratpack.exec.Operation
-import com.google.inject.Inject
+
 import javax.sql.DataSource
 
 import static org.jooq.generated.Tables.T_CATEGORY
+import static org.jooq.generated.Tables.T_DESCRIPTION
 
 @Log
 @CompileStatic
-class CategoryRepository {
+class DescriptionRepository {
     private final DSLContext dslContext
 
     @Inject
-    CategoryRepository(DataSource ds) {
+    DescriptionRepository(DataSource ds) {
         this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
     }
 
-    Operation insertCategory(Category category) {
-        return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() });
+    List<Description> selectAllDescriptions() {
+        return dslContext.selectFrom(T_DESCRIPTION).where(T_DESCRIPTION.ACTIVE_STATUS.endsWith(true)).fetchInto(Description.class)
     }
-
-    List<Category> selectAllCategories() {
-        return dslContext.selectFrom(T_CATEGORY).where(T_CATEGORY.ACTIVE_STATUS.eq(true))
-                .orderBy(T_CATEGORY.CATEGORY.asc())
-                .fetchInto(Category.class)
-    }
-
 }
 
 

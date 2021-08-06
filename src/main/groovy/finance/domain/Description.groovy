@@ -1,6 +1,10 @@
 package finance.domain
 
+import groovy.transform.ToString
+
+@ToString
 class Description {
-    String description = 'foo'
-    boolean activeStatus = true
+    Long descriptionId
+    String description
+    Boolean activeStatus
 }

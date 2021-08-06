@@ -1,6 +1,11 @@
 package finance.domain
 
+import groovy.transform.ToString
+
+@ToString
 class Parameter {
-    String parameterName = 'foo'
-    String parameterValue = 'bar'
+    Long parameterId
+    String parameterName
+    String parameterValue
+    Boolean activeStatus
 }
