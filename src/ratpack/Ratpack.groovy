@@ -26,7 +26,7 @@ ratpack {
     serverConfig { ServerConfigBuilder config ->
         port(5050)
         json('db_config.json')
-        //ssl SSLContexts.sslContext(new File('hornsup.jks'), 'monday1')
+        ssl SSLContexts.sslContext(new File('ssl/hornsup-raspi-finance.jks'), 'monday1')
 
         //https://github.com/merscwog/ratpack-ssl-test/tree/03b8d325708ae1a3fd20e3c35a5ead178b883703
     }

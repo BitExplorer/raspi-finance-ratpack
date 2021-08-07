@@ -25,6 +25,14 @@ class CategoryRepository {
 
     Operation insertCategory(Category category) {
         return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() });
+
+
+//        Record<?> record =
+//                create.insertInto(AUTHOR, AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME)
+//                        .values("Charlotte", "Roche")
+//                        .returningResult(AUTHOR.ID)
+//                        .fetchOne();
+
     }
 
     List<Category> selectAllCategories() {
