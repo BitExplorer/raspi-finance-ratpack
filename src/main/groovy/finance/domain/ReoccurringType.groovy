@@ -1,5 +1,5 @@
 package finance.domain
 
 enum ReoccurringType {
-    Monthly, Annually, BiAnnually, EveryTwoWeeks, Undefined
+    Monthly, Annually, BiAnnually, Fortnightly, Undefined
 }

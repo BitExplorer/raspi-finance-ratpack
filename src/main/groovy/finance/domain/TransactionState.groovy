@@ -1,5 +1,5 @@
 package finance.domain
 
 enum TransactionState {
-    Cleared, Outstanding,Future, Undefined
+    Cleared, Outstanding, Future, Undefined
 }

@@ -15,4 +15,6 @@ class Account {
     BigDecimal future
     BigDecimal cleared
     Timestamp dateClosed
+    Timestamp dateUpdated = new Timestamp(System.currentTimeMillis())
+    Timestamp dateAdded = new Timestamp(System.currentTimeMillis())
 }

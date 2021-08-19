@@ -21,4 +21,8 @@ class CategoryService implements Service {
     List<Category> selectAllCategories() {
         return categoryRepository.selectAllCategories()
     }
+
+//    Category insertCategory( Category category ) {
+//        this.categoryRepository.insertCategory(category)
+//    }
 }
