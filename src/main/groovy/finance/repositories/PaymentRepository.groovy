@@ -24,7 +24,7 @@ class PaymentRepository {
         this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
     }
 
-    List<Payment> selectAllPayments() {
+    List<Payment> payments() {
         return dslContext.selectFrom(T_PAYMENT).where().fetchInto(Payment.class)
     }
 }

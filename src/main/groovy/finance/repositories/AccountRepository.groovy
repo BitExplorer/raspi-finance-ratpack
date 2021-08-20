@@ -32,7 +32,7 @@ class AccountRepository {
         return Blocking.op({ -> dslContext.newRecord(T_ACCOUNT, account).store() })
     }
 
-    List<Account> selectAllAccounts() {
+    List<Account> accounts() {
         return dslContext.selectFrom(T_ACCOUNT).where().fetchInto(Account.class)
     }
 }

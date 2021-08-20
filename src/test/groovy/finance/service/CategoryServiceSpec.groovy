@@ -12,7 +12,7 @@ class CategoryServiceSpec extends  Specification {
     @Ignore
     void 'select all categories' () {
         when:
-        categoryService.selectAllCategories()
+        categoryService.categories()
 
         then:
         //actualResult == expectedResult

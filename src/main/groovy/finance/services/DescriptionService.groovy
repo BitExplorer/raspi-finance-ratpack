@@ -1,8 +1,7 @@
 package finance.services
 
-import finance.domain.Category
+
 import finance.domain.Description
-import finance.repositories.CategoryRepository
 import finance.repositories.DescriptionRepository
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
@@ -21,7 +20,7 @@ class DescriptionService implements Service {
         this.descriptionRepository = descriptionRepository
     }
 
-    List<Description> selectAllDescriptions() {
-        return descriptionRepository.selectAllDescriptions()
+    List<Description> descriptions() {
+        return descriptionRepository.descriptions()
     }
 }

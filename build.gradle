@@ -56,7 +56,7 @@ dependencies {
     implementation "com.h2database:h2:${h2Version}"
 
     //hibernate
-    implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.2.RELEASE'
+    //implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.2.RELEASE'
 }
 
 

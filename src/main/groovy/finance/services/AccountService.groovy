@@ -1,9 +1,7 @@
 package finance.services
 
 import finance.domain.Account
-import finance.domain.Description
 import finance.repositories.AccountRepository
-import finance.repositories.DescriptionRepository
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import ratpack.service.Service
@@ -21,7 +19,7 @@ class AccountService implements Service {
         this.accountRepository = accountRepository
     }
 
-    List<Account> selectAllAccounts() {
-        return accountRepository.selectAllAccounts()
+    List<Account> accounts() {
+        return accountRepository.accounts()
     }
 }

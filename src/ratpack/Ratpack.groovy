@@ -3,23 +3,21 @@ import com.zaxxer.hikari.HikariConfig
 import finance.domain.Account
 import finance.domain.Category
 import finance.domain.Description
+import finance.domain.Transaction
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
 import finance.services.PaymentService
-import javax.net.ssl.SSLContext
-import io.netty.internal.tcnative.SSLContext
+import finance.services.TransactionService
 import ratpack.ssl.SSLContexts
 
 //import postgres.PostgresConfig
 //import postgres.PostgresModule
-import ratpack.config.ConfigData
-import ratpack.config.ConfigDataBuilder
+
 import ratpack.handling.Context
 import ratpack.hikari.HikariModule
 import ratpack.server.ServerConfigBuilder
 
-import static groovy.json.JsonOutput.toJson
 import static ratpack.groovy.Groovy.ratpack
 
 ratpack {
@@ -39,17 +37,14 @@ ratpack {
         bind(DescriptionService)
         bind(AccountService)
         bind(PaymentService)
+        bind(TransactionService)
     }
 
     handlers {
-//        get("config") { PostgresConfig config ->
-//            render toJson(config)
-//        }
-
         get ('accounts') {
             Context context, AccountService accountService ->
                 context.request.getBody().then { typed ->
-                    List<Account> accounts = accountService.selectAllAccounts()
+                    List<Account> accounts = accountService.accounts()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(accounts)
                     render(json)
@@ -59,9 +54,19 @@ ratpack {
         get ('categories') {
             Context context, CategoryService categoryService ->
                 context.request.getBody().then { typed ->
-                    List<Category> categories = categoryService.selectAllCategories()
+                    List<Category> categories = categoryService.categories()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(categories)
+                    render(json)
+                }
+        }
+
+        get ('transactions') {
+            Context context, TransactionService transactionService ->
+                context.request.getBody().then { typed ->
+                    List<Transaction> transactions = transactionService.transactions()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(transactions)
                     render(json)
                 }
         }
@@ -69,13 +74,11 @@ ratpack {
         get ('descriptions') {
             Context context, DescriptionService descriptionService ->
                 context.request.getBody().then { typed ->
-                    List<Description> descriptions = descriptionService.selectAllDescriptions()
+                    List<Description> descriptions = descriptionService.descriptions()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(descriptions)
                     render(json)
                 }
         }
-
-        //files { dir 'public' }
     }
 }

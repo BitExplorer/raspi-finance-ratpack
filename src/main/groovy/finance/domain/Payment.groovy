@@ -3,6 +3,7 @@ package finance.domain
 import groovy.transform.ToString
 
 import java.sql.Date
+import java.sql.Timestamp
 
 @ToString
 class Payment {
@@ -13,4 +14,6 @@ class Payment {
     String guidSource
     String guidDestination
     Boolean activeStatus
+    Timestamp dateUpdated = new Timestamp(System.currentTimeMillis())
+    Timestamp dateAdded = new Timestamp(System.currentTimeMillis())
 }

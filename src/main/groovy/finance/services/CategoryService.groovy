@@ -18,8 +18,8 @@ class CategoryService implements Service {
         this.categoryRepository = categoryRepository
     }
 
-    List<Category> selectAllCategories() {
-        return categoryRepository.selectAllCategories()
+    List<Category> categories() {
+        return categoryRepository.categories()
     }
 
 //    Category insertCategory( Category category ) {

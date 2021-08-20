@@ -27,7 +27,7 @@ class CategoryRepository {
         return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() })
     }
 
-    List<Category> selectAllCategories() {
+    List<Category> categories() {
         return dslContext.selectFrom(T_CATEGORY).where(T_CATEGORY.ACTIVE_STATUS.eq(true))
                 .orderBy(T_CATEGORY.CATEGORY_NAME.asc())
                 .fetchInto(Category.class)

@@ -20,7 +20,7 @@ class PaymentService implements Service {
         this.paymentRepository = paymentRepository
     }
 
-    List<Payment> selectAllPayments() {
-        return paymentRepository.selectAllPayments()
+    List<Payment> payments() {
+        return paymentRepository.payments()
     }
 }
