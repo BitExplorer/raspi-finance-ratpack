@@ -4,11 +4,13 @@ import finance.domain.Account
 import finance.domain.Category
 import finance.domain.Description
 import finance.domain.Transaction
+import finance.handlers.CorsHandler
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
 import finance.services.PaymentService
 import finance.services.TransactionService
+import ratpack.http.MutableHeaders
 import ratpack.ssl.SSLContexts
 
 //import postgres.PostgresConfig
@@ -22,7 +24,8 @@ import static ratpack.groovy.Groovy.ratpack
 
 ratpack {
     serverConfig { ServerConfigBuilder config ->
-        port(5050)
+       // port(5050)
+        port(8443)
         json('db_config.json')
         ssl SSLContexts.sslContext(new File('ssl/hornsup-raspi-finance.jks'), 'monday1')
 
@@ -41,8 +44,23 @@ ratpack {
     }
 
     handlers {
-        get ('accounts') {
+        all(new CorsHandler())
+        get ('account/totals') {
+//            Context context ->
+//                MutableHeaders headers = context.response.headers
+//                headers.set('Access-Control-Allow-Origin', '*')
+//                headers.set('Access-Control-Allow-Headers', 'x-requested-with, origin, content-type, accept')
+//                context.next()
+                render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+        }
+
+        get ('account/select/active') {
+        //get ('accounts') {
             Context context, AccountService accountService ->
+//                MutableHeaders headers = context.response.headers
+//                headers.set('Access-Control-Allow-Origin', '*')
+//                headers.set('Access-Control-Allow-Headers', 'x-requested-with, origin, content-type, accept')
+//                context.next()
                 context.request.getBody().then { typed ->
                     List<Account> accounts = accountService.accounts()
                     ObjectMapper objectMapper = new ObjectMapper()
@@ -61,7 +79,9 @@ ratpack {
                 }
         }
 
-        get ('transactions') {
+
+        //get ('transactions') {
+        get ('transaction/select/all') {
             Context context, TransactionService transactionService ->
                 context.request.getBody().then { typed ->
                     List<Transaction> transactions = transactionService.transactions()
