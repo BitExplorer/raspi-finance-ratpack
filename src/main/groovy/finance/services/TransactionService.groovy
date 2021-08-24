@@ -19,7 +19,11 @@ class TransactionService implements Service {
         this.transactionRepository = transactionRepository
     }
 
-    List<Transaction> transactions() {
-        return transactionRepository.selectAllTransactions()
+    List<Transaction> transactionsAll() {
+        return transactionRepository.transactionsAll()
+    }
+
+    List<Transaction> transactions(String accountNameOwner) {
+        return transactionRepository.transactions(accountNameOwner)
     }
 }

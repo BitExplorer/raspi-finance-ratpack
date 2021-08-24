@@ -10,7 +10,6 @@ import finance.services.CategoryService
 import finance.services.DescriptionService
 import finance.services.PaymentService
 import finance.services.TransactionService
-import ratpack.http.MutableHeaders
 import ratpack.ssl.SSLContexts
 
 //import postgres.PostgresConfig
@@ -46,21 +45,12 @@ ratpack {
     handlers {
         all(new CorsHandler())
         get ('account/totals') {
-//            Context context ->
-//                MutableHeaders headers = context.response.headers
-//                headers.set('Access-Control-Allow-Origin', '*')
-//                headers.set('Access-Control-Allow-Headers', 'x-requested-with, origin, content-type, accept')
-//                context.next()
                 render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
         }
 
         get ('account/select/active') {
         //get ('accounts') {
             Context context, AccountService accountService ->
-//                MutableHeaders headers = context.response.headers
-//                headers.set('Access-Control-Allow-Origin', '*')
-//                headers.set('Access-Control-Allow-Headers', 'x-requested-with, origin, content-type, accept')
-//                context.next()
                 context.request.getBody().then { typed ->
                     List<Account> accounts = accountService.accounts()
                     ObjectMapper objectMapper = new ObjectMapper()
@@ -79,12 +69,36 @@ ratpack {
                 }
         }
 
+        get( 'transaction/account/select/:accountNameOwner') {
+
+            Context context, TransactionService transactionService ->
+                context.request.getBody().then { typed ->
+                    String accountNameOwner = pathTokens["accountNameOwner"]
+                    List<Transaction> transactions = transactionService.transactions(accountNameOwner)
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(transactions)
+                    render(json)
+                }
+        }
+
+        get('validation/amount/select/:accountNameOwner/cleared') {
+            String accountNameOwner = pathTokens["accountNameOwner"]
+            //validation/amount/select/amazon-store_brian/cleared
+            render('[]')
+        }
+
+
+        get('transaction/account/totals/:accountNameOwner') {
+            //	/transaction/account/totals/amazon-store_brian
+            String accountNameOwner = pathTokens["accountNameOwner"]
+            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+        }
 
         //get ('transactions') {
         get ('transaction/select/all') {
             Context context, TransactionService transactionService ->
                 context.request.getBody().then { typed ->
-                    List<Transaction> transactions = transactionService.transactions()
+                    List<Transaction> transactions = transactionService.transactionsAll()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(transactions)
                     render(json)
