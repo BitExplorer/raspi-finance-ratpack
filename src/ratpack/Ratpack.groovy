@@ -3,18 +3,17 @@ import com.zaxxer.hikari.HikariConfig
 import finance.domain.Account
 import finance.domain.Category
 import finance.domain.Description
+import finance.domain.Parameter
+import finance.domain.Payment
 import finance.domain.Transaction
 import finance.handlers.CorsHandler
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
+import finance.services.ParameterService
 import finance.services.PaymentService
 import finance.services.TransactionService
 import ratpack.ssl.SSLContexts
-
-//import postgres.PostgresConfig
-//import postgres.PostgresModule
-
 import ratpack.handling.Context
 import ratpack.hikari.HikariModule
 import ratpack.server.ServerConfigBuilder
@@ -39,13 +38,31 @@ ratpack {
         bind(DescriptionService)
         bind(AccountService)
         bind(PaymentService)
+        bind(ParameterService)
         bind(TransactionService)
     }
 
     handlers {
         all(new CorsHandler())
+
         get ('account/totals') {
                 render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+        }
+
+        get('transaction/account/totals/:accountNameOwner') {
+            String accountNameOwner = pathTokens["accountNameOwner"]
+            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+        }
+
+        get('parm/select/:parameterName') {
+            Context context, ParameterService parameterService ->
+                context.request.getBody().then { typed ->
+                    String parameterName = pathTokens["parameterName"]
+                    Parameter parameter = parameterService.parameter(parameterName)
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(parameter)
+                    render(json)
+                }
         }
 
         get ('account/select/active') {
@@ -58,6 +75,17 @@ ratpack {
                     render(json)
                 }
         }
+
+        get ('payment/select') {
+            Context context, PaymentService paymentService ->
+                context.request.getBody().then { typed ->
+                    List<Payment> payments = paymentService.payments()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(payments)
+                    render(json)
+                }
+        }
+
 
         get ('categories') {
             Context context, CategoryService categoryService ->
@@ -88,11 +116,7 @@ ratpack {
         }
 
 
-        get('transaction/account/totals/:accountNameOwner') {
-            //	/transaction/account/totals/amazon-store_brian
-            String accountNameOwner = pathTokens["accountNameOwner"]
-            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
-        }
+
 
         //get ('transactions') {
         get ('transaction/select/all') {
