@@ -27,7 +27,7 @@ class DescriptionRepository {
     }
 
     List<Description> descriptions() {
-        return dslContext.selectFrom(T_DESCRIPTION).where(T_DESCRIPTION.ACTIVE_STATUS.endsWith(true)).fetchInto(Description.class)
+        return dslContext.selectFrom(T_DESCRIPTION).where(T_DESCRIPTION.ACTIVE_STATUS.endsWith(true)).fetchInto(Description)
     }
 }
 

@@ -25,7 +25,7 @@ class ParameterRepository {
     }
 
     Parameter parameter(String parameterName) {
-        return dslContext.selectFrom(T_PARAMETER).where(T_PARAMETER.PARAMETER_NAME.equal(parameterName)).fetchOneInto(Parameter.class)
+        return dslContext.selectFrom(T_PARAMETER).where(T_PARAMETER.PARAMETER_NAME.equal(parameterName)).fetchOneInto(Parameter)
     }
 }
 

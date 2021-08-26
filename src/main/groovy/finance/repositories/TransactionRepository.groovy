@@ -29,11 +29,11 @@ class TransactionRepository {
     }
 
     List<Transaction> transactionsAll() {
-        return dslContext.selectFrom(T_TRANSACTION).where().fetchInto(Transaction.class)
+        return dslContext.selectFrom(T_TRANSACTION).where().fetchInto(Transaction)
     }
 
     List<Transaction> transactions(String accountNameOwner) {
-        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).fetchInto(Transaction.class)
+        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).fetchInto(Transaction)
     }
 }
 

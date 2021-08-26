@@ -25,7 +25,7 @@ class PaymentRepository {
     }
 
     List<Payment> payments() {
-        return dslContext.selectFrom(T_PAYMENT).where().fetchInto(Payment.class)
+        return dslContext.selectFrom(T_PAYMENT).where().fetchInto(Payment)
     }
 }
 

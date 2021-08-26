@@ -10,6 +10,10 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import ratpack.exec.Blocking
 import ratpack.exec.Operation
+//import static org.jooq.impl.DSL.*;
+
+import org.jooq.*;
+import org.jooq.impl.*;
 
 import javax.sql.DataSource
 
@@ -35,17 +39,21 @@ class SummaryRepository {
 //        return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() })
 //    }
 //
-//    Summary summary(String accountNameOwner) {
-//
-//        //create.select(sum(BOOK.ID))
-//        //      .from(BOOK)
-//
-//        return dslContext.select(T_TRANSACTION.AMOUNT.sum()).from(T_TRANSACTION).where(T_TRANSACTION.ACTIVE_STATUS.eq(true))
-//                //.and(T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
-//                //.and
-//                //.groupBy(T_TRANSACTION.TRANSACTION_STATE)
-//                //.fetchInto(Summary.class)
-//    }
+    Summary summary(String accountNameOwner) {
+
+        //create.select(sum(BOOK.ID))
+        //      .from(BOOK)
+
+
+        return dslContext.select(T_TRANSACTION.TRANSACTION_STATE, DSL.sum(T_TRANSACTION.AMOUNT).as("totals"))
+                .from(T_TRANSACTION).where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
+                .groupBy(T_TRANSACTION.TRANSACTION_STATE)
+                .fetchOneInto(Summary)
+                //.and(T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
+                //.and
+                //.groupBy(T_TRANSACTION.TRANSACTION_STATE)
+                //.fetchInto(Summary.class)
+    }
 
 }
 
