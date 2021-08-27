@@ -47,25 +47,30 @@ class SummaryRepository {
         //(select sum(amount) from t_transaction where transaction_state='outstanding' and active_status=true and account_name_owner='chase_kari') as totalsOutstanding,
         //(select sum(amount) from t_transaction where transaction_state='future' and active_status=true and account_name_owner='chase_kari') as totalsFuture;
 
-
-        Field TOTALS = dslContext.select(T_TRANSACTION.TRANSACTION_STATE, DSL.sum(T_TRANSACTION.AMOUNT))
+        def  TOTALS = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totals"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner)).asField("totals")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
+                 //.fetchOneInto(BigDecimal)
+                .asField("totals")
 
-        Field TOTALS_CLEARED = dslContext.select(T_TRANSACTION.TRANSACTION_STATE, DSL.sum(T_TRANSACTION.AMOUNT))
+        def TOTALS_CLEARED = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsCleared"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("cleared")).asField("totalsCleared")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("cleared"))
+                .asField("totalsCleared")
 
-        Field TOTALS_OUTSTANDING = dslContext.select(T_TRANSACTION.TRANSACTION_STATE, DSL.sum(T_TRANSACTION.AMOUNT))
+        def TOTALS_OUTSTANDING = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsOutstanding"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding")).asField("totalsOutstanding")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding"))
+                .asField("totalsOutstanding")
 
-        Field TOTALS_FUTURE = dslContext.select(T_TRANSACTION.TRANSACTION_STATE, DSL.sum(T_TRANSACTION.AMOUNT))
+        def TOTALS_FUTURE = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsFuture"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("future")).asField("totalsFuture")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("future"))
+                .asField("totalsFuture")
 
         return dslContext.select(TOTALS, TOTALS_CLEARED, TOTALS_OUTSTANDING, TOTALS_FUTURE)
                 .fetchOneInto(Summary)
+
     }
 
 }

@@ -5,8 +5,10 @@ import finance.domain.Category
 import finance.domain.Description
 import finance.domain.Parameter
 import finance.domain.Payment
+import finance.domain.Summary
 import finance.domain.Transaction
 import finance.handlers.CorsHandler
+import finance.repositories.SummaryRepository
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
@@ -40,6 +42,7 @@ ratpack {
         bind(PaymentService)
         bind(ParameterService)
         bind(TransactionService)
+        bind(SummaryRepository)
     }
 
     handlers {
@@ -50,9 +53,20 @@ ratpack {
         }
 
         get('transaction/account/totals/:accountNameOwner') {
-            String accountNameOwner = pathTokens["accountNameOwner"]
-            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+            Context context, SummaryRepository summaryRepository ->
+                context.request.getBody().then { typed ->
+                    String accountNameOwner = pathTokens["accountNameOwner"]
+                    Summary summary = summaryRepository.summary(accountNameOwner)
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(summary)
+                    render(json)
+                }
         }
+
+
+//            String accountNameOwner = pathTokens["accountNameOwner"]
+//            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+        //}
 
         get('parm/select/:parameterName') {
             Context context, ParameterService parameterService ->
