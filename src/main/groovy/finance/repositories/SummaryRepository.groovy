@@ -47,23 +47,23 @@ class SummaryRepository {
         //(select sum(amount) from t_transaction where transaction_state='outstanding' and active_status=true and account_name_owner='chase_kari') as totalsOutstanding,
         //(select sum(amount) from t_transaction where transaction_state='future' and active_status=true and account_name_owner='chase_kari') as totalsFuture;
 
-        def  TOTALS = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totals"))
+        def  TOTALS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totals"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
                  //.fetchOneInto(BigDecimal)
                 .asField("totals")
 
-        def TOTALS_CLEARED = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsCleared"))
+        def TOTALS_CLEARED = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsCleared"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("cleared"))
                 .asField("totalsCleared")
 
-        def TOTALS_OUTSTANDING = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsOutstanding"))
+        def TOTALS_OUTSTANDING = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsOutstanding"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding"))
                 .asField("totalsOutstanding")
 
-        def TOTALS_FUTURE = dslContext.select(DSL.sum(T_TRANSACTION.AMOUNT).as("totalsFuture"))
+        def TOTALS_FUTURE = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsFuture"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("future"))
                 .asField("totalsFuture")

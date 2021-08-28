@@ -33,7 +33,7 @@ class AccountRepository {
     }
 
     List<Account> accounts() {
-        return dslContext.selectFrom(T_ACCOUNT).where().fetchInto(Account)
+        return dslContext.selectFrom(T_ACCOUNT).where().orderBy(T_ACCOUNT.ACCOUNT_NAME_OWNER).fetchInto(Account)
     }
 }
 

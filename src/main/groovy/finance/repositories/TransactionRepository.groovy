@@ -33,7 +33,7 @@ class TransactionRepository {
     }
 
     List<Transaction> transactions(String accountNameOwner) {
-        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).fetchInto(Transaction)
+        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).orderBy(T_TRANSACTION.TRANSACTION_STATE.desc(), T_TRANSACTION.TRANSACTION_DATE).fetchInto(Transaction)
     }
 }
 
