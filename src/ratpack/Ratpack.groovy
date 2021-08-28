@@ -49,7 +49,14 @@ ratpack {
         all(new CorsHandler())
 
         get ('account/totals') {
-                render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+                //render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
+            Context context, SummaryRepository summaryRepository ->
+                context.request.getBody().then { typed ->
+                    Summary summary = summaryRepository.summaryAll()
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    String json = objectMapper.writeValueAsString(summary)
+                    render(json)
+                }
         }
 
         get('transaction/account/totals/:accountNameOwner') {
@@ -62,11 +69,6 @@ ratpack {
                     render(json)
                 }
         }
-
-
-//            String accountNameOwner = pathTokens["accountNameOwner"]
-//            render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
-        //}
 
         get('parm/select/:parameterName') {
             Context context, ParameterService parameterService ->

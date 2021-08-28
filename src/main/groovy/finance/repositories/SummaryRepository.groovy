@@ -30,15 +30,29 @@ class SummaryRepository {
         this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
     }
 
+    Summary summaryAll() {
+//        select
+//        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' AND active_status = true) B) as totals,
+//        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = 'cleared' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = 'cleared' AND active_status = true) B) as totalsCleared,
+//        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = 'outstanding' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = 'outstanding' AND active_status = true) B) as totalsOutstanding,
+//        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = 'future' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = 'future' AND active_status = true) B) as totalsFuture;
 
-    //SELECT SUM(amount), count(amount), transaction_state FROM t_transaction WHERE account_name_owner = :accountNameOwner AND active_status = true GROUP BY transaction_state
+        Field TOTALS_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0))
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit")).asField("debits")
 
-    //SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = :transactionState AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = :transactionState AND active_status = true) B
+        Field TOTALS_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0))
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credits")).asField("credits")
 
-//    Operation insertCategory(Category category) {
-//        return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() })
-//    }
-//
+        // does not work
+//        Field TOTALS = dslContext.select( TOTALS_DEBITS - TOTALS_CREDITS)
+//                .asField("totals")
+
+        Summary summary = dslContext.select()
+                .fetchOneInto(Summary)
+
+        return summary
+    }
+
     Summary summary(String accountNameOwner) {
 
         //select
@@ -47,29 +61,31 @@ class SummaryRepository {
         //(select sum(amount) from t_transaction where transaction_state='outstanding' and active_status=true and account_name_owner='chase_kari') as totalsOutstanding,
         //(select sum(amount) from t_transaction where transaction_state='future' and active_status=true and account_name_owner='chase_kari') as totalsFuture;
 
-        def  TOTALS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totals"))
+        Field TOTALS = dslContext.select( DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totals"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner))
-                 //.fetchOneInto(BigDecimal)
                 .asField("totals")
 
-        def TOTALS_CLEARED = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsCleared"))
+        Field TOTALS_CLEARED = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsCleared"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("cleared"))
                 .asField("totalsCleared")
 
-        def TOTALS_OUTSTANDING = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsOutstanding"))
+        Field TOTALS_OUTSTANDING = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsOutstanding"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding"))
                 .asField("totalsOutstanding")
 
-        def TOTALS_FUTURE = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsFuture"))
+        Field TOTALS_FUTURE = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("totalsFuture"))
                 .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("future"))
                 .asField("totalsFuture")
 
-        return dslContext.select(TOTALS, TOTALS_CLEARED, TOTALS_OUTSTANDING, TOTALS_FUTURE)
+        //Field<String> field = new F
+        Summary summary = dslContext.select(TOTALS, TOTALS_CLEARED, TOTALS_OUTSTANDING, TOTALS_FUTURE)
                 .fetchOneInto(Summary)
+        summary.accountNameOwner = accountNameOwner
+        return summary
 
     }
 
