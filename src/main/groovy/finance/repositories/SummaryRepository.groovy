@@ -37,20 +37,33 @@ class SummaryRepository {
 //        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = 'outstanding' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = 'outstanding' AND active_status = true) B) as totalsOutstanding,
 //        (SELECT COALESCE(A.debits, 0.0) - COALESCE(B.credits, 0.0) FROM ( SELECT SUM(amount) AS debits FROM t_transaction WHERE account_type = 'debit' AND transaction_state = 'future' AND active_status = true) A,( SELECT SUM(amount) AS credits FROM t_transaction WHERE account_type = 'credit' and transaction_state = 'future' AND active_status = true) B) as totalsFuture;
 
-        Field TOTALS_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0))
+        Field TOTALS_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("debits"))
+                .from(T_TRANSACTION)
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit")).asField("debits")
 
-        Field TOTALS_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0))
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credits")).asField("credits")
+        Field TOTALS_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("credits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit")).asField("credits")
+
+
+//        return dslContext.select((TOTALS_DEBITS.subtract(TOTALS_CREDITS)).as("totals"))
+//                .fetchOneInto(Summary)
+
+        //def TOTALS = dslContext.select(TOTALS_DEBITS.subtract(TOTALS_CREDITS).as("totals")).asField("totals")
+
+        //Summary summary = dslContext.select(TOTALS.as("totals"))
+        //        .fetchOneInto(Summary)
 
         // does not work
-//        Field TOTALS = dslContext.select( TOTALS_DEBITS - TOTALS_CREDITS)
-//                .asField("totals")
+        //Field TOTALS = dslContext.select( TOTALS_DEBITS - TOTALS_CREDITS)
+        //.from()
+        //        .asField("totals")
 
-        Summary summary = dslContext.select()
-                .fetchOneInto(Summary)
+        //Summary summary = dslContext.select(TOTALS)
+        //        .fetchOneInto(Summary)
 
-        return summary
+        //return summary
+        return new Summary()
     }
 
     Summary summary(String accountNameOwner) {
