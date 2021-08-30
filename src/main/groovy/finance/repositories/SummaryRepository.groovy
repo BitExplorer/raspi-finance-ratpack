@@ -39,31 +39,38 @@ class SummaryRepository {
 
         Field TOTALS_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("debits"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit")).asField("debits")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit")).asField()
 
         Field TOTALS_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("credits"))
                 .from(T_TRANSACTION)
-                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit")).asField("credits")
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit")).asField()
 
+        Field TOTALS = dslContext.select(TOTALS_DEBITS.subtract(TOTALS_CREDITS).as("totals")).asField("totals")
 
-//        return dslContext.select((TOTALS_DEBITS.subtract(TOTALS_CREDITS)).as("totals"))
-//                .fetchOneInto(Summary)
+        Field CLEARED_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("debits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit") & T_TRANSACTION.TRANSACTION_STATE.eq("cleared")).asField()
 
-        //def TOTALS = dslContext.select(TOTALS_DEBITS.subtract(TOTALS_CREDITS).as("totals")).asField("totals")
+        Field CLEARED_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("credits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit") & T_TRANSACTION.TRANSACTION_STATE.eq("cleared")).asField()
 
-        //Summary summary = dslContext.select(TOTALS.as("totals"))
-        //        .fetchOneInto(Summary)
+        Field CLEARED = dslContext.select(CLEARED_DEBITS.subtract(CLEARED_CREDITS).as("totalsCleared")).asField("totalsCleared")
 
-        // does not work
-        //Field TOTALS = dslContext.select( TOTALS_DEBITS - TOTALS_CREDITS)
-        //.from()
-        //        .asField("totals")
+        Field OUTSTANDING_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("debits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit") & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding")).asField()
 
-        //Summary summary = dslContext.select(TOTALS)
-        //        .fetchOneInto(Summary)
+        Field OUTSTANDING_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("credits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit") & T_TRANSACTION.TRANSACTION_STATE.eq("outstanding")).asField()
 
-        //return summary
-        return new Summary()
+        Field OUTSTANDING = dslContext.select(OUTSTANDING_DEBITS.subtract(OUTSTANDING_CREDITS).as("totalsOutstanding")).asField("totalsOutstanding")
+
+        Summary summary = dslContext.select(TOTALS, CLEARED, OUTSTANDING)
+                .fetchOneInto(Summary)
+
+        return summary
     }
 
     Summary summary(String accountNameOwner) {
