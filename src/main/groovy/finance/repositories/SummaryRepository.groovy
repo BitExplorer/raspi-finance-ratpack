@@ -1,23 +1,13 @@
 package finance.repositories
 
 import com.google.inject.Inject
-import finance.domain.Category
 import finance.domain.Summary
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
-import org.jooq.DSLContext
-import org.jooq.SQLDialect
 import org.jooq.impl.DSL
-import ratpack.exec.Blocking
-import ratpack.exec.Operation
-//import static org.jooq.impl.DSL.*;
-
 import org.jooq.*;
-import org.jooq.impl.*;
-
 import javax.sql.DataSource
 
-import static org.jooq.generated.Tables.T_CATEGORY
 import static org.jooq.generated.Tables.T_TRANSACTION
 
 @Log
@@ -67,7 +57,18 @@ class SummaryRepository {
 
         Field OUTSTANDING = dslContext.select(OUTSTANDING_DEBITS.subtract(OUTSTANDING_CREDITS).as("totalsOutstanding")).asField("totalsOutstanding")
 
-        Summary summary = dslContext.select(TOTALS, CLEARED, OUTSTANDING)
+
+        Field FUTURE_DEBITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("debits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("debit") & T_TRANSACTION.TRANSACTION_STATE.eq("future")).asField()
+
+        Field FUTURE_CREDITS = dslContext.select(DSL.coalesce(DSL.sum(T_TRANSACTION.AMOUNT), 0.0).as("credits"))
+                .from(T_TRANSACTION)
+                .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_TYPE.eq("credit") & T_TRANSACTION.TRANSACTION_STATE.eq("future")).asField()
+
+        Field FUTURE = dslContext.select(FUTURE_DEBITS.subtract(FUTURE_CREDITS).as("totalsFuture")).asField("totalsFuture")
+
+        Summary summary = dslContext.select(TOTALS, CLEARED, OUTSTANDING,FUTURE)
                 .fetchOneInto(Summary)
 
         return summary
@@ -101,12 +102,8 @@ class SummaryRepository {
                 .where(T_TRANSACTION.ACTIVE_STATUS.eq(true) & T_TRANSACTION.ACCOUNT_NAME_OWNER.eq(accountNameOwner) & T_TRANSACTION.TRANSACTION_STATE.eq("future"))
                 .asField("totalsFuture")
 
-        //Field<String> field = new F
-        Summary summary = dslContext.select(TOTALS, TOTALS_CLEARED, TOTALS_OUTSTANDING, TOTALS_FUTURE)
+        return dslContext.select(TOTALS, TOTALS_CLEARED, TOTALS_OUTSTANDING, TOTALS_FUTURE)
                 .fetchOneInto(Summary)
-        summary.accountNameOwner = accountNameOwner
-        return summary
-
     }
 
 }

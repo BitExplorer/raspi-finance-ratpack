@@ -8,12 +8,12 @@ import finance.domain.Payment
 import finance.domain.Summary
 import finance.domain.Transaction
 import finance.handlers.CorsHandler
-import finance.repositories.SummaryRepository
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
 import finance.services.ParameterService
 import finance.services.PaymentService
+import finance.services.SummaryService
 import finance.services.TransactionService
 import ratpack.ssl.SSLContexts
 import ratpack.handling.Context
@@ -42,7 +42,7 @@ ratpack {
         bind(PaymentService)
         bind(ParameterService)
         bind(TransactionService)
-        bind(SummaryRepository)
+        bind(SummaryService)
     }
 
     handlers {
@@ -50,9 +50,9 @@ ratpack {
 
         get ('account/totals') {
                 //render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
-            Context context, SummaryRepository summaryRepository ->
+            Context context, SummaryService summaryService ->
                 context.request.getBody().then { typed ->
-                    Summary summary = summaryRepository.summaryAll()
+                    Summary summary = summaryService.summaryAll()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(summary)
                     render(json)
@@ -60,10 +60,10 @@ ratpack {
         }
 
         get('transaction/account/totals/:accountNameOwner') {
-            Context context, SummaryRepository summaryRepository ->
+            Context context, SummaryService summaryService ->
                 context.request.getBody().then { typed ->
                     String accountNameOwner = pathTokens["accountNameOwner"]
-                    Summary summary = summaryRepository.summary(accountNameOwner)
+                    Summary summary = summaryService.summary(accountNameOwner)
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(summary)
                     render(json)
