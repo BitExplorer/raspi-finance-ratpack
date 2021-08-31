@@ -63,6 +63,18 @@ dependencies {
     //implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.2.RELEASE'
 }
 
+flyway {
+    driver = "org.postgresql.Driver"
+    url = "jdbc:postgresql://192.168.100.124:5432/finance_db"
+    user = 'henninb'
+    password = 'monday1'
+    schemas = ['public']
+    outOfOrder = true
+    locations = [
+            "classpath:db/migration"
+    ]
+}
+
 
 jooq {
     version = "${jooqVersion}"
