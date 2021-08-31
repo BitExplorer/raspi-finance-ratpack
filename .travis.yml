@@ -1,3 +1,19 @@
+addons:
+  apt:
+    packages:
+      - postgresql-13
+      - postgresql-client-13
+
+before_script:
+  - psql -c 'CREATE DATABASE finance_db;' -U postgres
+  - psql -c "CREATE USER henninb WITH PASSWORD 'monday1';" -U postgres
+  - psql -c 'ALTER USER henninb CREATEDB;' -U postgres
+  - psql -c 'ALTER USER henninb SUPERUSER;' -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb' -U postgres
+
+services:
+  - postgresql
+
 language: groovy
 jdk:
   - openjdk11
