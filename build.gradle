@@ -18,11 +18,11 @@ plugins {
     id 'io.ratpack.ratpack-groovy' version "${ratpackVersion}"
     id "com.github.johnrengelman.shadow" version "${shadowVersion}"
     id "com.github.ben-manes.versions" version "${gradleVersionsPlugin}"
-    id 'nu.studer.jooq' version '6.0'
+    id "org.flywaydb.flyway" version "${flywayVersion}"
+    id 'nu.studer.jooq' version "${jooqPluginVersion}"
 }
 
 repositories {
-    //jcenter()
     mavenCentral()
 }
 
@@ -54,6 +54,9 @@ dependencies {
 
     //H2
     implementation "com.h2database:h2:${h2Version}"
+
+    //Flyway
+    implementation("org.flywaydb:flyway-core:${flywayVersion}")
 
     //hibernate
     //implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.2.RELEASE'
