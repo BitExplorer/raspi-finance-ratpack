@@ -11,6 +11,7 @@ import finance.handlers.CorsHandler
 import finance.services.AccountService
 import finance.services.CategoryService
 import finance.services.DescriptionService
+import finance.services.FlywayService
 import finance.services.ParameterService
 import finance.services.PaymentService
 import finance.services.SummaryService
@@ -43,6 +44,7 @@ ratpack {
         bind(ParameterService)
         bind(TransactionService)
         bind(SummaryService)
+        bindInstance(new FlywayService())
     }
 
     handlers {
