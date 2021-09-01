@@ -5,11 +5,11 @@ addons:
       - postgresql-client-13
 
 before_script:
-  - psql -c 'CREATE DATABASE finance_db;' -U postgres
-  - psql -c "CREATE USER henninb WITH PASSWORD 'monday1';" -U postgres
-  - psql -c 'ALTER USER henninb CREATEDB;' -U postgres
-  - psql -c 'ALTER USER henninb SUPERUSER;' -U postgres
-  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb' -U postgres
+  - psql -U postgres -d postgres -c "CREATE DATABASE finance_db"
+  - psql -U postgres -d postgres -c "CREATE USER henninb WITH PASSWORD 'monday1'"
+  - psql -U postgres -d postgres -c "ALTER USER henninb CREATEDB"
+  - psql -U postgres -d postgres -c 'ALTER USER henninb SUPERUSER'
+  - psql -U postgres -d postgres -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb'
 
 services:
   - postgresql
@@ -17,7 +17,7 @@ services:
 language: groovy
 jdk:
   - openjdk11
-script: ./gradlew clean flywayInfo && ./gradlew clean build
+script: ./gradlew clean build
 
 notifications:
   email: henninb@msn.com
