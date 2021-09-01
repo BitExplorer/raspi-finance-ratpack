@@ -23,6 +23,7 @@ class FlywayService implements Service {
 
         flyway.setDataSource(dataSource)
 
+        flyway.baselineOnMigrate = true
         flyway.migrate()
     }
 }
