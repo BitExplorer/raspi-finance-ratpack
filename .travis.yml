@@ -1,21 +1,21 @@
 addons:
-  postgresql: "13"
+  postgresql: "12"
   apt:
     packages:
-      - postgresql-13
-      - postgresql-client-13
+      - postgresql-12
+      - postgresql-client-12
 
 before_script:
-  - psql -U postgres -d postgres -c "CREATE DATABASE finance_db"
-  - psql -U postgres -d postgres -c "CREATE USER henninb WITH PASSWORD 'monday1'"
-  - psql -U postgres -d postgres -c "ALTER USER henninb CREATEDB"
-  - psql -U postgres -d postgres -c 'ALTER USER henninb SUPERUSER'
-  - psql -U postgres -d postgres -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb'
+  - psql -U postgres -d postgres -c "CREATE DATABASE finance_db;"
+  - psql -U postgres -d postgres -c "CREATE USER henninb WITH PASSWORD 'monday1';"
+  - psql -U postgres -d postgres -c "ALTER USER henninb CREATEDB;"
+  - psql -U postgres -d postgres -c 'ALTER USER henninb SUPERUSER;'
+  - psql -U postgres -d postgres -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb;'
 
 env:
   global:
     - PGPORT=5432
-    - PGUSER=henninb
+#    - PGUSER=henninb
 
 services:
   - postgresql
