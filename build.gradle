@@ -39,8 +39,7 @@ dependencies {
     runtimeOnly("org.slf4j:slf4j-simple:1.7.32")
 
     //Groovy
-    implementation("org.codehaus.groovy:groovy-all:2.5.14")
-    //implementation("org.codehaus.groovy:groovy-all:3.0.8")
+    implementation("org.codehaus.groovy:groovy-all:${groovyVersion}")
 
     // JOOQ
     implementation("org.jooq:jooq:${jooqVersion}")
@@ -86,7 +85,7 @@ jooq {
                generationTool {
                    jdbc {
                        driver = 'org.postgresql.Driver'
-                       url = 'jdbc:postgresql://192.168.100.124:5432/finance_db'
+                       url = 'jdbc:postgresql://192.168.10.25:5432/finance_db'
                        user = 'henninb'
                        password = 'monday1'
                    }
