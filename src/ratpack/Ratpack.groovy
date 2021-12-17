@@ -16,6 +16,7 @@ import finance.services.ParameterService
 import finance.services.PaymentService
 import finance.services.SummaryService
 import finance.services.TransactionService
+//import gql.ratpack.GraphQLHandler
 import ratpack.ssl.SSLContexts
 import ratpack.handling.Context
 import ratpack.hikari.HikariModule
@@ -165,6 +166,18 @@ ratpack {
                     println('transaction delete called')
                     render('{}')
                 }
+        }
+
+        post('validation/amount/insert/:accountNameOwner') {
+            println('validation amount insert called')
+            render('{}')
+        }
+
+
+        //post('graphql', GraphQLHandler)
+        post('graphql') {
+                println('graphql called - test')
+            render('[]')
         }
     }
 }
