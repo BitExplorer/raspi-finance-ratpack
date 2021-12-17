@@ -34,4 +34,8 @@ class TransactionService implements Service {
         }
         return false
     }
+
+    void insertTransaction(Transaction transaction) {
+        transactionRepository.insertTransaction(transaction)
+    }
 }

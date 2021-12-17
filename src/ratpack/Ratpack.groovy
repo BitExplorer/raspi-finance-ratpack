@@ -52,9 +52,8 @@ ratpack {
         all(new CorsHandler())
 
         get ('account/totals') {
-                //render('{totals:0, totalsCleared:0, totalsOutstanding:0, totalsFuture:0}')
             Context context, SummaryService summaryService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     Summary summary = summaryService.summaryAll()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(summary)
@@ -64,7 +63,7 @@ ratpack {
 
         get('transaction/account/totals/:accountNameOwner') {
             Context context, SummaryService summaryService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     String accountNameOwner = pathTokens["accountNameOwner"]
                     Summary summary = summaryService.summary(accountNameOwner)
                     ObjectMapper objectMapper = new ObjectMapper()
@@ -75,7 +74,7 @@ ratpack {
 
         get('parm/select/:parameterName') {
             Context context, ParameterService parameterService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     String parameterName = pathTokens["parameterName"]
                     Parameter parameter = parameterService.parameter(parameterName)
                     ObjectMapper objectMapper = new ObjectMapper()
@@ -87,7 +86,7 @@ ratpack {
         get ('account/select/active') {
         //get ('accounts') {
             Context context, AccountService accountService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     List<Account> accounts = accountService.accounts()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(accounts)
@@ -97,7 +96,7 @@ ratpack {
 
         get ('payment/select') {
             Context context, PaymentService paymentService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     List<Payment> payments = paymentService.payments()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(payments)
@@ -108,7 +107,7 @@ ratpack {
 
         get ('categories') {
             Context context, CategoryService categoryService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     List<Category> categories = categoryService.categories()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(categories)
@@ -119,7 +118,7 @@ ratpack {
         get( 'transaction/account/select/:accountNameOwner') {
 
             Context context, TransactionService transactionService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     String accountNameOwner = pathTokens["accountNameOwner"]
                     List<Transaction> transactions = transactionService.transactions(accountNameOwner)
                     ObjectMapper objectMapper = new ObjectMapper()
@@ -140,7 +139,7 @@ ratpack {
         //get ('transactions') {
         get ('transaction/select/all') {
             Context context, TransactionService transactionService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     List<Transaction> transactions = transactionService.transactionsAll()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(transactions)
@@ -150,7 +149,7 @@ ratpack {
 
         get ('descriptions') {
             Context context, DescriptionService descriptionService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     List<Description> descriptions = descriptionService.descriptions()
                     ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(descriptions)
@@ -160,7 +159,7 @@ ratpack {
 
         delete('transaction/delete/:guid') {
             Context context, TransactionService transactionService ->
-                context.request.getBody().then { typed ->
+                context.request.getBody().then {
                     String guid = pathTokens["guid"]
                     transactionService.deleteTransaction(guid)
                     println('transaction delete called')
@@ -176,8 +175,19 @@ ratpack {
 
         //post('graphql', GraphQLHandler)
         post('graphql') {
-                println('graphql called - test')
+            println('graphql called - test')
             render('[]')
+        }
+
+        post('transaction/insert') {
+            Context context, TransactionService transactionService ->
+                context.request.body.then {
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    Transaction transaction = objectMapper.readValue(it.text, Transaction)
+                    transactionService.insertTransaction(transaction)
+                    println transaction
+                    render('{}')
+                }
         }
     }
 }
