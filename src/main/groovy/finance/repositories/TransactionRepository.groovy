@@ -1,6 +1,7 @@
 package finance.repositories
 
 import com.google.inject.Inject
+import finance.domain.Parameter
 import finance.domain.Transaction
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
@@ -12,6 +13,8 @@ import ratpack.exec.Operation
 
 import javax.sql.DataSource
 
+import static org.jooq.generated.Tables.T_PARAMETER
+import static org.jooq.generated.Tables.T_PARAMETER
 import static org.jooq.generated.Tables.T_TRANSACTION
 
 @Log
@@ -34,6 +37,17 @@ class TransactionRepository {
 
     List<Transaction> transactions(String accountNameOwner) {
         return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).orderBy(T_TRANSACTION.TRANSACTION_STATE.desc(), T_TRANSACTION.TRANSACTION_DATE).fetchInto(Transaction)
+    }
+
+    Transaction findByGuid(String guid) {
+        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.GUID.equal(guid)).fetchOneInto(Transaction)
+    }
+
+    boolean deleteTransaction(String guid) {
+        dslContext.delete(T_TRANSACTION)
+                .where(T_TRANSACTION.GUID.equal(guid))
+                .execute()
+        return true
     }
 }
 

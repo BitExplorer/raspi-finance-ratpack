@@ -10,6 +10,7 @@ class CorsHandler implements Handler {
                 .response
                 .headers
                 .add('Access-Control-Allow-Origin', '*')
+                .add('Access-Control-Allow-Methods', 'GET, POST,DELETE,PUT')
                 .add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
         ctx.next()

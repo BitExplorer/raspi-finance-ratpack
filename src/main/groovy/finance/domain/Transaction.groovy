@@ -1,6 +1,5 @@
 package finance.domain
 
-import java.sql.Date
 import java.sql.Timestamp
 
 class Transaction {
@@ -8,7 +7,17 @@ class Transaction {
     Long accountId
     AccountType accountType
     String accountNameOwner
-    Date transactionDate
+    //Changed from java.sql.Date to String
+    String transactionDate
+//    String transactionDate() {
+//        println('called getter.')
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
+//        println(simpleDateFormat.format(this.transactionDate))
+//        return simpleDateFormat.format(this.transactionDate)
+//    }
+//    void transactionDate(String date) {
+//        this.transactionDate = date
+//    }
     String description
     String category
     BigDecimal amount

@@ -156,5 +156,15 @@ ratpack {
                     render(json)
                 }
         }
+
+        delete('transaction/delete/:guid') {
+            Context context, TransactionService transactionService ->
+                context.request.getBody().then { typed ->
+                    String guid = pathTokens["guid"]
+                    transactionService.deleteTransaction(guid)
+                    println('transaction delete called')
+                    render('{}')
+                }
+        }
     }
 }

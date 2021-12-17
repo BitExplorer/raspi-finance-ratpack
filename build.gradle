@@ -2,7 +2,6 @@ import nu.studer.gradle.jooq.JooqEdition
 
 buildscript {
     repositories {
-        //jcenter()
         mavenCentral()
     }
     dependencies {
@@ -44,19 +43,19 @@ dependencies {
     // JOOQ
     implementation("org.jooq:jooq:${jooqVersion}")
 
-    testImplementation "org.spockframework:spock-core:1.3-groovy-2.5"
+    testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     //  testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 
     //postgreSQL
     runtimeOnly("org.postgresql:postgresql:${postgresqlVersion}")
-    jooqGenerator "org.postgresql:postgresql:${postgresqlVersion}"
+    jooqGenerator("org.postgresql:postgresql:${postgresqlVersion}")
 
     //H2
-    implementation "com.h2database:h2:${h2Version}"
+    implementation("com.h2database:h2:${h2Version}")
 
     //Flyway
     //implementation("org.flywaydb:flyway-core:${flywayVersion}")
-    implementation "org.flywaydb:flyway-core:5.1.3"
+    implementation("org.flywaydb:flyway-core:5.1.3")
 
     //hibernate
     //implementation 'org.grails:grails-datastore-gorm-hibernate5:7.0.2.RELEASE'
@@ -64,7 +63,7 @@ dependencies {
 
 flyway {
     driver = "org.postgresql.Driver"
-    url = "jdbc:postgresql://192.168.100.124:5432/finance_db"
+    url = "jdbc:postgresql://192.168.10.25:5432/finance_db"
     user = 'henninb'
     password = 'monday1'
     schemas = ['public']

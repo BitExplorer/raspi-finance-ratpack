@@ -26,4 +26,12 @@ class TransactionService implements Service {
     List<Transaction> transactions(String accountNameOwner) {
         return transactionRepository.transactions(accountNameOwner)
     }
+
+    boolean deleteTransaction(String guid) {
+        Transaction transaction = transactionRepository.findByGuid(guid)
+        if(transaction) {
+            return transactionRepository.deleteTransaction(guid)
+        }
+        return false
+    }
 }
