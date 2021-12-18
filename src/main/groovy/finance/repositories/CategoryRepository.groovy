@@ -11,6 +11,7 @@ import ratpack.exec.Operation
 import com.google.inject.Inject
 import javax.sql.DataSource
 
+import static org.jooq.generated.Tables.T_ACCOUNT
 import static org.jooq.generated.Tables.T_CATEGORY
 
 @Log
@@ -23,8 +24,9 @@ class CategoryRepository {
         this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
     }
 
-    Operation insertCategory(Category category) {
-        return Blocking.op({ -> dslContext.newRecord(T_CATEGORY, category).store() })
+    boolean insertCategory(Category category) {
+        dslContext.newRecord(T_CATEGORY, category).store()
+        return true
     }
 
     List<Category> categories() {
@@ -33,6 +35,16 @@ class CategoryRepository {
                 .fetchInto(Category)
     }
 
+    Category findByCategoryName(String categoryName) {
+        return dslContext.selectFrom(T_CATEGORY).where(T_CATEGORY.CATEGORY_NAME.equal(categoryName)).fetchOneInto(Category)
+    }
+
+    boolean deleteCategory(String categoryName) {
+        dslContext.delete(T_CATEGORY)
+                .where(T_CATEGORY.CATEGORY_NAME.equal(categoryName))
+                .execute()
+        return true
+    }
 }
 
 

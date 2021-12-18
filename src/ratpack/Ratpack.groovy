@@ -177,6 +177,10 @@ ratpack {
             render('[]')
         }
 
+        post('description/insert') {
+            render('[]')
+        }
+
         post('transaction/insert') {
             Context context, TransactionService transactionService ->
                 context.request.body.then {
