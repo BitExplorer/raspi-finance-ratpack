@@ -23,12 +23,25 @@ class TransactionRepository {
     private final DSLContext dslContext
 
     @Inject
-    TransactionRepository(DataSource ds) {
-        this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
+    TransactionRepository(DataSource dataSource) {
+        this.dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
-    Operation insertTransaction(Transaction account) {
-        return Blocking.op({ -> dslContext.newRecord(T_TRANSACTION, account).store() })
+    //Operation insertTransaction(Transaction transaction) {
+    boolean insertTransaction(Transaction transaction) {
+        dslContext.newRecord(T_TRANSACTION, transaction).store()
+        return true
+//
+//        // Load a jOOQ-generated BookRecord from your POJO
+//        BookRecord book = create.newRecord(BOOK, myBook);
+//
+//// Insert it (implicitly)
+//        book.store();
+//
+//// Insert it (explicitly)
+//        create.executeInsert(book);
+
+        //return Blocking.op({ -> dslContext.newRecord(T_TRANSACTION, transaction).store() })
     }
 
     List<Transaction> transactionsAll() {
@@ -36,7 +49,10 @@ class TransactionRepository {
     }
 
     List<Transaction> transactions(String accountNameOwner) {
-        return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).orderBy(T_TRANSACTION.TRANSACTION_STATE.desc(), T_TRANSACTION.TRANSACTION_DATE).fetchInto(Transaction)
+        return dslContext.selectFrom(T_TRANSACTION)
+                         .where(T_TRANSACTION.ACCOUNT_NAME_OWNER.equal(accountNameOwner))
+                         .orderBy(T_TRANSACTION.TRANSACTION_STATE.desc(), T_TRANSACTION.TRANSACTION_DATE.desc())
+                         .fetchInto(Transaction)
     }
 
     Transaction findByGuid(String guid) {
@@ -45,8 +61,8 @@ class TransactionRepository {
 
     boolean deleteTransaction(String guid) {
         dslContext.delete(T_TRANSACTION)
-                .where(T_TRANSACTION.GUID.equal(guid))
-                .execute()
+                  .where(T_TRANSACTION.GUID.equal(guid))
+                  .execute()
         return true
     }
 }

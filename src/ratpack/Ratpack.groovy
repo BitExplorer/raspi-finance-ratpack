@@ -172,10 +172,8 @@ ratpack {
             render('{}')
         }
 
-
         //post('graphql', GraphQLHandler)
         post('graphql') {
-            println('graphql called - test')
             render('[]')
         }
 
@@ -184,9 +182,9 @@ ratpack {
                 context.request.body.then {
                     ObjectMapper objectMapper = new ObjectMapper()
                     Transaction transaction = objectMapper.readValue(it.text, Transaction)
-                    transactionService.insertTransaction(transaction)
+                    Transaction transactionResult = transactionService.insertTransaction(transaction)
                     println transaction
-                    render('{}')
+                    render(objectMapper.writeValueAsString(transactionResult))
                 }
         }
     }

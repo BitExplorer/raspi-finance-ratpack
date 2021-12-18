@@ -1,5 +1,5 @@
 package finance.domain
 
 enum AccountType {
-  credit,debit, unknown
+  credit,debit, undefined
 }
