@@ -37,28 +37,28 @@ class TransactionService implements Service {
     }
 
     boolean deleteTransaction(String guid) {
-        Transaction transaction = transactionRepository.findByGuid(guid)
+        Transaction transaction = transactionRepository.transaction(guid)
         if(transaction) {
-            return transactionRepository.deleteTransaction(guid)
+            return transactionRepository.transactionDelete(guid)
         }
         return false
     }
 
-    Transaction insertTransaction(Transaction transaction) {
+    Transaction transactionInsert(Transaction transaction) {
         transaction.dateUpdated = new Timestamp(System.currentTimeMillis())
         transaction.dateAdded = new Timestamp(System.currentTimeMillis())
 
-        Category category = categoryRepository.findByCategoryName(transaction.category)
+        Category category = categoryRepository.category(transaction.category)
         if(!category) {
-            categoryRepository.insertCategory(
+            categoryRepository.categoryInsert(
                     new Category(categoryName: transaction.category, activeStatus: true)
             )
         }
-        Account account = accountRepository.findByAccountNameOwner(transaction.accountNameOwner)
+        Account account = accountRepository.account(transaction.accountNameOwner)
         if(account) {
             transaction.accountType = account.accountType
             transaction.accountId = account.accountId
-            transactionRepository.insertTransaction(transaction)
+            transactionRepository.transactionInsert(transaction)
             log.info("inserted transaction ${transaction.guid}")
             return transaction
         }

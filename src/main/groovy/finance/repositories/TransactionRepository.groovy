@@ -28,18 +28,9 @@ class TransactionRepository {
     }
 
     //Operation insertTransaction(Transaction transaction) {
-    boolean insertTransaction(Transaction transaction) {
+    boolean transactionInsert(Transaction transaction) {
         dslContext.newRecord(T_TRANSACTION, transaction).store()
         return true
-//
-//        // Load a jOOQ-generated BookRecord from your POJO
-//        BookRecord book = create.newRecord(BOOK, myBook);
-//
-//// Insert it (implicitly)
-//        book.store();
-//
-//// Insert it (explicitly)
-//        create.executeInsert(book);
 
         //return Blocking.op({ -> dslContext.newRecord(T_TRANSACTION, transaction).store() })
     }
@@ -55,20 +46,14 @@ class TransactionRepository {
                          .fetchInto(Transaction)
     }
 
-    Transaction findByGuid(String guid) {
+    Transaction transaction(String guid) {
         return dslContext.selectFrom(T_TRANSACTION).where(T_TRANSACTION.GUID.equal(guid)).fetchOneInto(Transaction)
     }
 
-    boolean deleteTransaction(String guid) {
+    boolean transactionDelete(String guid) {
         dslContext.delete(T_TRANSACTION)
                   .where(T_TRANSACTION.GUID.equal(guid))
                   .execute()
         return true
     }
 }
-
-
-
-
-
-

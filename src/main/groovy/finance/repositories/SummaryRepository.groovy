@@ -16,8 +16,8 @@ class SummaryRepository {
     private final DSLContext dslContext
 
     @Inject
-    SummaryRepository(DataSource ds) {
-        this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
+    SummaryRepository(DataSource dataSource) {
+        this.dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
     Summary summaryAll() {
@@ -107,9 +107,3 @@ class SummaryRepository {
     }
 
 }
-
-
-
-
-
-

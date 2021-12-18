@@ -24,7 +24,7 @@ class CategoryRepository {
         this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
     }
 
-    boolean insertCategory(Category category) {
+    boolean categoryInsert(Category category) {
         dslContext.newRecord(T_CATEGORY, category).store()
         return true
     }
@@ -35,20 +35,14 @@ class CategoryRepository {
                 .fetchInto(Category)
     }
 
-    Category findByCategoryName(String categoryName) {
+    Category category(String categoryName) {
         return dslContext.selectFrom(T_CATEGORY).where(T_CATEGORY.CATEGORY_NAME.equal(categoryName)).fetchOneInto(Category)
     }
 
-    boolean deleteCategory(String categoryName) {
+    boolean categoryDelete(String categoryName) {
         dslContext.delete(T_CATEGORY)
                 .where(T_CATEGORY.CATEGORY_NAME.equal(categoryName))
                 .execute()
         return true
     }
 }
-
-
-
-
-
-

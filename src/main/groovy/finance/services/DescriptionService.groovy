@@ -23,4 +23,11 @@ class DescriptionService implements Service {
     List<Description> descriptions() {
         return descriptionRepository.descriptions()
     }
+
+    boolean descriptionInsert(Description description) {
+        if(descriptionRepository.description(description.descriptionName)) {
+            return false
+        }
+        return descriptionRepository.descriptionInsert(description)
+    }
 }

@@ -178,7 +178,15 @@ ratpack {
         }
 
         post('description/insert') {
-            render('[]')
+            Context context, DescriptionService descriptionService ->
+                context.request.body.then {
+                    ObjectMapper objectMapper = new ObjectMapper()
+                    println(it.text)
+                    Description description = objectMapper.readValue(it.text, Description)
+                    descriptionService.descriptionInsert(description)
+                    render(description)
+                }
+
         }
 
         post('transaction/insert') {
@@ -186,7 +194,7 @@ ratpack {
                 context.request.body.then {
                     ObjectMapper objectMapper = new ObjectMapper()
                     Transaction transaction = objectMapper.readValue(it.text, Transaction)
-                    Transaction transactionResult = transactionService.insertTransaction(transaction)
+                    Transaction transactionResult = transactionService.transactionInsert(transaction)
                     println transaction
                     render(objectMapper.writeValueAsString(transactionResult))
                 }

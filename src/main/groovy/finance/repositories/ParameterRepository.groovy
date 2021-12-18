@@ -20,17 +20,11 @@ class ParameterRepository {
     private final DSLContext dslContext
 
     @Inject
-    ParameterRepository(DataSource ds) {
-        this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
+    ParameterRepository(DataSource dataSource) {
+        this.dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
     Parameter parameter(String parameterName) {
         return dslContext.selectFrom(T_PARAMETER).where(T_PARAMETER.PARAMETER_NAME.equal(parameterName)).fetchOneInto(Parameter)
     }
 }
-
-
-
-
-
-

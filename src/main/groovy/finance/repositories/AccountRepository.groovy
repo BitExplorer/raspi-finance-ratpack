@@ -23,7 +23,7 @@ class AccountRepository {
         this.dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
-    boolean insertAccount(Account account) {
+    boolean accountInsert(Account account) {
         //return Blocking.op({ -> dslContext.newRecord(T_ACCOUNT, account).store() })
         dslContext.newRecord(T_ACCOUNT, account).store()
     }
@@ -32,20 +32,14 @@ class AccountRepository {
         return dslContext.selectFrom(T_ACCOUNT).where().orderBy(T_ACCOUNT.ACCOUNT_NAME_OWNER).fetchInto(Account)
     }
 
-    Account findByAccountNameOwner(String accountName) {
+    Account account(String accountName) {
         return dslContext.selectFrom(T_ACCOUNT).where(T_ACCOUNT.ACCOUNT_NAME_OWNER.equal(accountName)).fetchOneInto(Account)
     }
 
-    boolean deleteAccount(String accountNameOwner) {
+    boolean accountDelete(String accountNameOwner) {
         dslContext.delete(T_ACCOUNT)
                 .where(T_ACCOUNT.ACCOUNT_NAME_OWNER.equal(accountNameOwner))
                 .execute()
         return true
     }
 }
-
-
-
-
-
-

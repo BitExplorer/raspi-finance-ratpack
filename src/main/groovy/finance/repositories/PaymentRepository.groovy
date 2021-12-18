@@ -20,17 +20,16 @@ class PaymentRepository {
     private final DSLContext dslContext
 
     @Inject
-    PaymentRepository(DataSource ds) {
-        this.dslContext = DSL.using(ds, SQLDialect.POSTGRES)
+    PaymentRepository(DataSource dataSource) {
+        this.dslContext = DSL.using(dataSource, SQLDialect.POSTGRES)
+    }
+
+    boolean paymentInsert(Payment payment) {
+        dslContext.newRecord(T_PAYMENT, payment).store()
+        return true
     }
 
     List<Payment> payments() {
         return dslContext.selectFrom(T_PAYMENT).where().fetchInto(Payment)
     }
 }
-
-
-
-
-
-
