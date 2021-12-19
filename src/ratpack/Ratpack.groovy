@@ -16,6 +16,8 @@ import finance.services.ParameterService
 import finance.services.PaymentService
 import finance.services.SummaryService
 import finance.services.TransactionService
+import finance.services.ValidationAmountService
+
 //import gql.ratpack.GraphQLHandler
 import ratpack.ssl.SSLContexts
 import ratpack.handling.Context
@@ -45,6 +47,8 @@ ratpack {
         bind(ParameterService)
         bind(TransactionService)
         bind(SummaryService)
+        bind(ValidationAmountService)
+        bind(ObjectMapper)
         bindInstance(new FlywayService())
     }
 
@@ -52,53 +56,47 @@ ratpack {
         all(new CorsHandler())
 
         get ('account/totals') {
-            Context context, SummaryService summaryService ->
+            Context context, SummaryService summaryService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     Summary summary = summaryService.summaryAll()
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(summary)
                     render(json)
                 }
         }
 
         get('transaction/account/totals/:accountNameOwner') {
-            Context context, SummaryService summaryService ->
+            Context context, SummaryService summaryService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     String accountNameOwner = pathTokens["accountNameOwner"]
                     Summary summary = summaryService.summary(accountNameOwner)
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(summary)
                     render(json)
                 }
         }
 
         get('parm/select/:parameterName') {
-            Context context, ParameterService parameterService ->
+            Context context, ParameterService parameterService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     String parameterName = pathTokens["parameterName"]
                     Parameter parameter = parameterService.parameter(parameterName)
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(parameter)
                     render(json)
                 }
         }
 
         get ('account/select/active') {
-        //get ('accounts') {
-            Context context, AccountService accountService ->
+            Context context, AccountService accountService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     List<Account> accounts = accountService.accounts()
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(accounts)
                     render(json)
                 }
         }
 
         get ('payment/select') {
-            Context context, PaymentService paymentService ->
+            Context context, PaymentService paymentService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     List<Payment> payments = paymentService.payments()
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(payments)
                     render(json)
                 }
@@ -106,10 +104,9 @@ ratpack {
 
 
         get ('categories') {
-            Context context, CategoryService categoryService ->
+            Context context, CategoryService categoryService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     List<Category> categories = categoryService.categories()
-                    ObjectMapper objectMapper = new ObjectMapper()
                     String json = objectMapper.writeValueAsString(categories)
                     render(json)
                 }
@@ -117,20 +114,23 @@ ratpack {
 
         get( 'transaction/account/select/:accountNameOwner') {
 
-            Context context, TransactionService transactionService ->
+            Context context, TransactionService transactionService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     String accountNameOwner = pathTokens["accountNameOwner"]
                     List<Transaction> transactions = transactionService.transactions(accountNameOwner)
-                    ObjectMapper objectMapper = new ObjectMapper()
-                    String json = objectMapper.writeValueAsString(transactions)
-                    render(json)
+                    render(objectMapper.writeValueAsString(transactions))
                 }
         }
 
         get('validation/amount/select/:accountNameOwner/cleared') {
-            String accountNameOwner = pathTokens["accountNameOwner"]
+            Context context, ValidationAmountService validationAmountService, ObjectMapper objectMapper ->
+                context.request.getBody().then {
+                    String accountNameOwner = pathTokens["accountNameOwner"]
+                }
+
             //validation/amount/select/amazon-store_brian/cleared
             render('[]')
+            //TODO: fix
         }
 
 
@@ -138,22 +138,18 @@ ratpack {
 
         //get ('transactions') {
         get ('transaction/select/all') {
-            Context context, TransactionService transactionService ->
+            Context context, TransactionService transactionService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     List<Transaction> transactions = transactionService.transactionsAll()
-                    ObjectMapper objectMapper = new ObjectMapper()
-                    String json = objectMapper.writeValueAsString(transactions)
-                    render(json)
+                    render(objectMapper.writeValueAsString(transactions))
                 }
         }
 
         get ('descriptions') {
-            Context context, DescriptionService descriptionService ->
+            Context context, DescriptionService descriptionService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     List<Description> descriptions = descriptionService.descriptions()
-                    ObjectMapper objectMapper = new ObjectMapper()
-                    String json = objectMapper.writeValueAsString(descriptions)
-                    render(json)
+                    render(objectMapper.writeValueAsString(descriptions))
                 }
         }
 
@@ -170,17 +166,18 @@ ratpack {
         post('validation/amount/insert/:accountNameOwner') {
             println('validation amount insert called')
             render('{}')
+            //TODO: fix
         }
 
         //post('graphql', GraphQLHandler)
         post('graphql') {
             render('[]')
+            //TODO: fix
         }
 
         post('description/insert') {
-            Context context, DescriptionService descriptionService ->
+            Context context, DescriptionService descriptionService, ObjectMapper objectMapper ->
                 context.request.body.then {
-                    ObjectMapper objectMapper = new ObjectMapper()
                     println(it.text)
                     Description description = objectMapper.readValue(it.text, Description)
                     descriptionService.descriptionInsert(description)
@@ -190,14 +187,24 @@ ratpack {
         }
 
         post('transaction/insert') {
-            Context context, TransactionService transactionService ->
+            Context context, TransactionService transactionService, ObjectMapper objectMapper ->
                 context.request.body.then {
-                    ObjectMapper objectMapper = new ObjectMapper()
+                    //ObjectMapper objectMapper = new ObjectMapper()
                     Transaction transaction = objectMapper.readValue(it.text, Transaction)
                     Transaction transactionResult = transactionService.transactionInsert(transaction)
                     println transaction
                     render(objectMapper.writeValueAsString(transactionResult))
                 }
+        }
+
+        post('transaction/future/insert') {
+            Context context, TransactionService transactionService, ObjectMapper objectMapper ->
+                context.request.body.then {
+                    Transaction transaction = objectMapper.readValue(it.text, Transaction)
+                    println(it.text)
+                    //TODO: fix
+                }
+
         }
     }
 }

@@ -32,8 +32,8 @@ class AccountRepository {
         return dslContext.selectFrom(T_ACCOUNT).where().orderBy(T_ACCOUNT.ACCOUNT_NAME_OWNER).fetchInto(Account)
     }
 
-    Account account(String accountName) {
-        return dslContext.selectFrom(T_ACCOUNT).where(T_ACCOUNT.ACCOUNT_NAME_OWNER.equal(accountName)).fetchOneInto(Account)
+    Account account(String accountNameOwner) {
+        return dslContext.selectFrom(T_ACCOUNT).where(T_ACCOUNT.ACCOUNT_NAME_OWNER.equal(accountNameOwner)).fetchOneInto(Account)
     }
 
     boolean accountDelete(String accountNameOwner) {
