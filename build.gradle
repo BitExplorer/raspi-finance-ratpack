@@ -77,7 +77,6 @@ flyway {
     ]
 }
 
-
 jooq {
     version = "${jooqVersion}"
     edition = JooqEdition.OSS
@@ -112,6 +111,9 @@ jooq {
                    }
               }
         }
-
+    }
+    tasks.named('generateJooq').configure {
+        // ensure database schema has been prepared by Flyway before generating the jOOQ sources
+        dependsOn tasks.named('flywayMigrate')
     }
 }
