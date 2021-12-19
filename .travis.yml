@@ -47,8 +47,8 @@ addons:
 env:
   global:
     - PGPORT=5432
-    - PGPASSWORD=travis
-    - PGUSER=travis
+    - PGPASSWORD=monday1
+    - PGUSER=henninb
 
 before_install:
   - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/12/main/postgresql.conf
@@ -57,12 +57,14 @@ before_install:
 
 before_script:
   - psql --version
-  - psql -p "${PGPORT}" -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' -U travis
-  - psql -p "${PGPORT}" -c 'CREATE DATABASE finance_test_db;' -U travis
-  - psql -p "${PGPORT}" -c "CREATE USER henninb WITH PASSWORD 'monday1';" -U travis
-  - psql -p "${PGPORT}" -c 'ALTER USER henninb CREATEDB;' -U travis
-  - psql -p "${PGPORT}" -c 'ALTER USER henninb SUPERUSER;' -U travis
-  - psql -p "${PGPORT}" -c 'GRANT ALL PRIVILEGES ON DATABASE finance_test_db TO henninb' -U travis
+  - psql -p "${PGPORT}" -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' -U henninb
+  - psql -p "${PGPORT}" -c 'CREATE DATABASE finance_test_db;' -U henninb
+  - psql -p "${PGPORT}" -c 'CREATE DATABASE finance_db;' -U henninb
+  - psql -p "${PGPORT}" -c "CREATE USER henninb WITH PASSWORD 'monday1';" -U henninb
+  - psql -p "${PGPORT}" -c 'ALTER USER henninb CREATEDB;' -U henninb
+  - psql -p "${PGPORT}" -c 'ALTER USER henninb SUPERUSER;' -U henninb
+  - psql -p "${PGPORT}" -c 'GRANT ALL PRIVILEGES ON DATABASE finance_test_db TO henninb' -U henninb
+  - psql -p "${PGPORT}" -c 'GRANT ALL PRIVILEGES ON DATABASE finance_db TO henninb' -U henninb
 
 after_script:
   - psql --version
