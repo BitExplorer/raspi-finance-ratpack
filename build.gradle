@@ -67,7 +67,7 @@ dependencies {
 
 flyway {
     driver = "org.postgresql.Driver"
-    url = "jdbc:postgresql://192.168.10.25:5432/finance_db"
+    url = "jdbc:postgresql://raspi:5432/finance_db"
     user = 'henninb'
     password = 'monday1'
     schemas = ['public']
@@ -88,7 +88,7 @@ jooq {
                generationTool {
                    jdbc {
                        driver = 'org.postgresql.Driver'
-                       url = 'jdbc:postgresql://192.168.10.25:5432/finance_db'
+                       url = 'jdbc:postgresql://raspi:5432/finance_db'
                        user = 'henninb'
                        password = 'monday1'
                    }

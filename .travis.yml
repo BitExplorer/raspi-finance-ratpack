@@ -1,4 +1,5 @@
 addons:
+  hostname: raspi
   postgresql: "12"
   apt:
     packages:
