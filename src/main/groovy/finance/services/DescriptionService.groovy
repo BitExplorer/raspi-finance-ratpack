@@ -8,6 +8,7 @@ import groovy.util.logging.Log
 import ratpack.service.Service
 
 import javax.inject.Inject
+import java.sql.Timestamp
 
 @Log
 @CompileStatic
@@ -24,10 +25,13 @@ class DescriptionService implements Service {
         return descriptionRepository.descriptions()
     }
 
-    boolean descriptionInsert(Description description) {
+    Description descriptionInsert(Description description) {
+        description.dateUpdated = new Timestamp(System.currentTimeMillis())
+        description.dateAdded = new Timestamp(System.currentTimeMillis())
         if(descriptionRepository.description(description.descriptionName)) {
-            return false
+            return descriptionRepository.description(description.descriptionName)
         }
-        return descriptionRepository.descriptionInsert(description)
+        descriptionRepository.descriptionInsert(description)
+        return description
     }
 }
