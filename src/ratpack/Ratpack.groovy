@@ -197,6 +197,17 @@ ratpack {
                 }
         }
 
+        post('payment/insert') {
+            Context context, PaymentService paymentService, ObjectMapper objectMapper ->
+                context.request.body.then {
+                    println("response body: " + it.text)
+                    Payment payment = objectMapper.readValue(it.text, Payment)
+                    Payment paymentResult = paymentService.paymentInsert(payment)
+                    println payment
+                    render(objectMapper.writeValueAsString(paymentResult))
+                }
+        }
+
         post('transaction/future/insert') {
             Context context, TransactionService transactionService, ObjectMapper objectMapper ->
                 context.request.body.then {

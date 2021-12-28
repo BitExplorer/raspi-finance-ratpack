@@ -8,6 +8,7 @@ import groovy.util.logging.Log
 import ratpack.service.Service
 
 import javax.inject.Inject
+import java.sql.Timestamp
 
 @Log
 @CompileStatic
@@ -22,5 +23,17 @@ class PaymentService implements Service {
 
     List<Payment> payments() {
         return paymentRepository.payments()
+    }
+
+    Payment paymentInsert(Payment payment) {
+        payment.dateUpdated = new Timestamp(System.currentTimeMillis())
+        payment.dateAdded = new Timestamp(System.currentTimeMillis())
+        payment.guidSource = UUID.randomUUID()
+        payment.guidDestination = UUID.randomUUID()
+
+        //TODO: insert transactions
+
+        paymentRepository.paymentInsert(payment)
+        return payment
     }
 }

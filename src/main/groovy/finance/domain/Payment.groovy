@@ -11,6 +11,7 @@ class Payment {
     String accountNameOwner
     BigDecimal amount
     Date transactionDate
+    //String transactionDate
     String guidSource
     String guidDestination
     Boolean activeStatus
