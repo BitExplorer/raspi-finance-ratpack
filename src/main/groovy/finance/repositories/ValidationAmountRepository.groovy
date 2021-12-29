@@ -34,7 +34,7 @@ class ValidationAmountRepository {
         return dslContext.selectFrom(T_VALIDATION_AMOUNT).where().fetchInto(ValidationAmount)
     }
 
-    ValidationAmount validationAmount(Long accountId) {
-        return dslContext.selectFrom(T_VALIDATION_AMOUNT).where(T_VALIDATION_AMOUNT.ACCOUNT_ID.equal(accountId)).fetchOneInto(ValidationAmount)
+    List<ValidationAmount> validationAmounts(Long accountId) {
+        return dslContext.selectFrom(T_VALIDATION_AMOUNT).where(T_VALIDATION_AMOUNT.ACCOUNT_ID.equal(accountId)).fetchInto(ValidationAmount)
     }
 }

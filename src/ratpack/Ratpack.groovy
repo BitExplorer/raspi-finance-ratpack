@@ -7,6 +7,7 @@ import finance.domain.Parameter
 import finance.domain.Payment
 import finance.domain.Summary
 import finance.domain.Transaction
+import finance.domain.ValidationAmount
 import finance.handlers.CorsHandler
 import finance.services.AccountService
 import finance.services.CategoryService
@@ -126,17 +127,11 @@ ratpack {
             Context context, ValidationAmountService validationAmountService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
                     String accountNameOwner = pathTokens["accountNameOwner"]
+                    ValidationAmount validationAmount = validationAmountService.validationAmount(accountNameOwner)
+                    render(objectMapper.writeValueAsString(validationAmount))
                 }
-
-            //validation/amount/select/amazon-store_brian/cleared
-            render('[]')
-            //TODO: fix
         }
 
-
-
-
-        //get ('transactions') {
         get ('transaction/select/all') {
             Context context, TransactionService transactionService, ObjectMapper objectMapper ->
                 context.request.getBody().then {
@@ -164,9 +159,16 @@ ratpack {
         }
 
         post('validation/amount/insert/:accountNameOwner') {
-            println('validation amount insert called')
-            render('{}')
-            //TODO: fix
+            Context context, ValidationAmountService validationAmountService, ObjectMapper objectMapper ->
+                context.request.body.then {
+                    String accountNameOwner = pathTokens["accountNameOwner"]
+                    println(it.text)
+                    ValidationAmount validationAmount = objectMapper.readValue(it.text, ValidationAmount)
+                    ValidationAmount validationAmountResult = validationAmountService.validationAmountInsert(accountNameOwner, validationAmount)
+                    println(objectMapper.writeValueAsString(validationAmountResult))
+                    render(objectMapper.writeValueAsString(validationAmountResult))
+                    //render('[]')
+                }
         }
 
         //post('graphql', GraphQLHandler)
@@ -180,7 +182,7 @@ ratpack {
                 context.request.body.then {
                     println(it.text)
                     Description description = objectMapper.readValue(it.text, Description)
-                    descriptionService.descriptionInsert(description)
+                    //descriptionService.descriptionInsert(description)
                     Description descriptionResult = descriptionService.descriptionInsert(description)
                     render(objectMapper.writeValueAsString(descriptionResult))
                 }
