@@ -7,6 +7,7 @@ import finance.domain.Parameter
 import finance.domain.Payment
 import finance.domain.Summary
 import finance.domain.Transaction
+import finance.domain.TransactionState
 import finance.domain.ValidationAmount
 import finance.handlers.CorsHandler
 import finance.services.AccountService
@@ -148,6 +149,10 @@ ratpack {
                 }
         }
 
+        get('transaction/payment/required') {
+            //TODO: need to code this
+        }
+
         delete('transaction/delete/:guid') {
             Context context, TransactionService transactionService ->
                 context.request.getBody().then {
@@ -182,7 +187,6 @@ ratpack {
                 context.request.body.then {
                     println(it.text)
                     Description description = objectMapper.readValue(it.text, Description)
-                    //descriptionService.descriptionInsert(description)
                     Description descriptionResult = descriptionService.descriptionInsert(description)
                     render(objectMapper.writeValueAsString(descriptionResult))
                 }
@@ -215,8 +219,22 @@ ratpack {
                     Transaction transaction = objectMapper.readValue(it.text, Transaction)
                     println(it.text)
                     //TODO: fix
+                    render('created future transaction')
                 }
 
+        }
+
+        put('transaction/state/update/:guid/:transactionState') {
+            Context context, TransactionService transactionService, ObjectMapper objectMapper ->
+                context.request.body.then {
+                    String guid = pathTokens["guid"]
+                    String transactionState = pathTokens["transactionState"]
+
+                    println(transactionState)
+                    println(guid)
+                    transactionService.transactionStateUpdate(guid, transactionState)
+                    render('updated transaction record')
+                }
         }
     }
 }

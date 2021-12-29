@@ -3,6 +3,7 @@ package finance.repositories
 import com.google.inject.Inject
 import finance.domain.Parameter
 import finance.domain.Transaction
+import finance.domain.TransactionState
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log
 import org.jooq.DSLContext
@@ -33,6 +34,12 @@ class TransactionRepository {
         return true
 
         //return Blocking.op({ -> dslContext.newRecord(T_TRANSACTION, transaction).store() })
+    }
+
+    boolean transactionStateUpdate(String guid, String transactionState) {
+        dslContext.update(T_TRANSACTION).set(T_TRANSACTION.TRANSACTION_STATE, transactionState)
+                  .where(T_TRANSACTION.GUID.eq(guid)).execute()
+        return true
     }
 
     List<Transaction> transactionsAll() {

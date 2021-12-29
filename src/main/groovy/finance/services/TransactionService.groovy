@@ -3,6 +3,7 @@ package finance.services
 import finance.domain.Account
 import finance.domain.Category
 import finance.domain.Transaction
+import finance.domain.TransactionState
 import finance.repositories.AccountRepository
 import finance.repositories.CategoryRepository
 import finance.repositories.TransactionRepository
@@ -63,5 +64,9 @@ class TransactionService implements Service {
             return transaction
         }
         throw new RuntimeException("no account found for transaction ${transaction.guid}")
+    }
+
+    boolean transactionStateUpdate(String guid, String transactionState) {
+        return transactionRepository.transactionStateUpdate(guid, transactionState)
     }
 }
